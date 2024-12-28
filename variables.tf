@@ -1,47 +1,17 @@
-## Subscription ID, Resource Group and Location set. These are kept universal in this code. ####
-variable "subscription_id" {
-  type    = string
-  default = ""
-}
-variable "location" {
-  type    = string
-  default = ""
-}
-variable "rg_Name" {
-  type    = string
-  default = ""
-}
-
-### VNET Module Variables Start ###
-
-variable "vnet_Name" {
-  type    = string
-  default = ""
-}
-variable "vnet_Address" {
-  type    = string
-  default = ""
-}
-variable "subnet_NameList" {
-  type    = list(string)
-  default = [""]
-}
-variable "subnet_AddressList" {
-  type    = list(string)
-  default = [""]
-}
-
-## Pre defined KV details
-variable "devKV_Name" {
-  type    = string
-  default = ""
-}
-#### Variables for Linux Virtual Module defined here ####
-
 variable "vm_pip" {
   type        = string
   default     = ""
   description = "Name of the Public IP instance assigned to the Virtual Machine"
+}
+variable "rg_Name" {
+  type        = string
+  default     = ""
+  description = "Resource Group to be used for Virtual Machine Deployment"
+}
+variable "location" {
+  type        = string
+  default     = ""
+  description = "Location of the Azure Virtual Machine"
 }
 variable "pip_allocation" {
   type    = string
@@ -57,6 +27,7 @@ variable "vm_nic" {
   default     = ""
   description = "Network Interface card name assigned to the Virtual Machine"
 }
+
 
 variable "ip_configuration" {
   type        = string
@@ -108,26 +79,23 @@ variable "vm_os_disk_strg_type" {
   type        = string
   default     = "Standard_LRS"
   description = "OS Disk Storage Type. Possible options are Standard_LRS, StandardSSD_LRS and Premium_LRS."
+  validation {
+    condition     = contains(["Standard_LRS", "StandardSSD_LRS", "Premium_LRS"], var.vm_os_disk_strg_type)
+    error_message = "Unsupported disk type for Virtual machine. Possible options are Standard_LRS, StandardSSD_LRS and Premium_LRS."
+  }
 }
 
 variable "vm_os_disk_caching" {
   type        = string
   default     = "ReadWrite"
   description = "The Type of Caching which should be used for the Internal OS Disk. Possible values are None, ReadOnly and ReadWrite."
+  validation {
+    condition     = contains(["None", "ReadOnly", "ReadWrite"], var.vm_os_disk_caching)
+    error_message = "Unsupported value for disk caching. Possible values are None, ReadOnly and ReadWrite."
+  }
 
 }
-
-variable "virtual_machine_Usr" {
+variable "vm_subnetid" {
   type        = string
-  description = "Username for Azure Virtual Machine. This will be fetched from Key Vault."
+  description = "Subnet Id for the Virtual machine. This will be fetched from Network Module."
 }
-
-variable "virtual_machine_Passwd" {
-  type        = string
-  description = "Password for Azure Virtual Machine. This will be fetched from Key Vault."
-}
-
-# variable "vm_subnetid" {
-#   type        = string
-#   description = "Subnet Id for the Virtual machine. This will be fetched from Network Module."
-# }
